@@ -1,6 +1,6 @@
 # Drug Target Discovery Pipeline
 
-A computational pipeline for identifying potential drug targets from gene expression data, focusing on prostate cancer.
+An automated pipeline for identifying potential drug targets from microarray gene expression data, focusing on prostate cancer.
 
 ## Overview
 
@@ -28,7 +28,7 @@ This repository includes:
 ### Setup
 1. Clone this repository:
 ```
-git clone https://github.com/yourusername/drug-target-discovery.git
+git clone https://github.com/gvmfhy/drug-target-discovery.git
 cd drug-target-discovery
 ```
 
