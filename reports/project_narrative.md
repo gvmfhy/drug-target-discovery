@@ -113,8 +113,5 @@ While my current implementation successfully processes microarray data and ident
 
 ## Conclusion: Bridging Computational and Biological Insights
 
-This drug target discovery pipeline demonstrates how computational approaches can bridge the gap between raw biological data and actionable drug development insights. By combining network analysis of gene expression with drug database integration, I've created a powerful tool for identifying both established and novel therapeutic targets.
-
+This drug target discovery pipeline demonstrates how computational approaches can bridge the gap between raw biological data and actionable drug development insights. By combining network analysis of gene expression with drug database integration, I've created a tool for identifying both established and unexplored therapeutic targets. 
 The most significant contribution of this approach is its ability to highlight genes that are central to disease networks but may have been overlooked by traditional drug development. These genes represent potential opportunities for pioneering new therapeutic strategies.
-
-The pipeline I've developed is not just a technical achievement—it's a practical tool that can accelerate the early stages of drug discovery by prioritizing targets for experimental validation, potentially reducing the time and cost of bringing new treatments from concept to clinic. 
