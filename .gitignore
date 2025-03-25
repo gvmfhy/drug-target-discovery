@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints
+venv/
+
+# R
+.Rhistory
+.Rapp.history
+.RData
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+
+# Large files
+*.soft 

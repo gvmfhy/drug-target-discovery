@@ -1,0 +1,29 @@
+# Drug Target Discovery Pipeline Summary
+
+Date: 2025-03-25 00:46:58
+Dataset: GSE46602
+
+## Dataset Statistics
+- Samples: 50
+- Probes/Genes: 54675
+
+## Differential Expression Analysis
+- Significant genes: 1294
+- Up-regulated: 768
+- Down-regulated: 526
+
+## Network Analysis
+- Network nodes: 500
+- Network edges: 3577
+
+## Top Potential Drug Targets
+1. DIPK1B (score: 0.9568)
+2. AFP (score: 0.6688)
+3. FAM181A (score: 0.6674)
+4. GS1-600G8.3 (score: 0.6674)
+5. DEFB123 (score: 0.6674)
+6. DEFA4 (score: 0.6674)
+7. DCST1 (score: 0.6674)
+8. IL12A (score: 0.6674)
+9. CACNA1F (score: 0.6674)
+10. HAPSTR2 (score: 0.6674)
