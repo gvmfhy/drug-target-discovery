@@ -19,3 +19,9 @@ tmp/
 
 # Large files
 *.soft 
+
+# IDE specific files
+.vscode
+
+# Results files from local runs
+results/GSE46602*
