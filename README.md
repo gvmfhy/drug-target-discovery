@@ -52,7 +52,7 @@ Rscript install_r_packages.R
 
 Run the pipeline on the included prostate cancer dataset:
 ```
-python drug_target_gse46602/pipeline2 --matrix-file drug_target_gse46602/prostate_GSE46602_series_matrix.txt
+python drug_target_gse46602/pipeline2.py --matrix-file drug_target_gse46602/prostate_GSE46602_series_matrix.txt
 ```
 
 Results will be saved to a timestamped directory in the `results/` folder.
