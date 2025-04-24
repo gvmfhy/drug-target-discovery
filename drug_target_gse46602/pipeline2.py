@@ -109,7 +109,7 @@ def map_probes_to_genes_bioc(probe_ids):
     
     return mapping
 
-def write_probe_ids_to_file(probe_ids, probes_file):
+def write_probe_ids_to_file(probe_ids: list[str], probes_file: str):
     logger.info(f"Writing {len(probe_ids)} probe IDs to temporary file")
     with open(probes_file, 'w') as f:
         for probe_id in probe_ids:
