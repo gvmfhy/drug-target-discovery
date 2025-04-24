@@ -67,10 +67,7 @@ def map_probes_to_genes_bioc(probe_ids):
     output_file = os.path.join(temp_dir, "probe_mapping.csv")
     
     # Write probe IDs to temporary file
-    logger.info(f"Writing {len(probe_ids)} probe IDs to temporary file")
-    with open(probes_file, 'w') as f:
-        for probe_id in probe_ids:
-            f.write(f"{probe_id}\n")
+    write_probe_ids_to_file(probe_ids, probes_file)
     
     # Run R script
     try:
@@ -111,6 +108,12 @@ def map_probes_to_genes_bioc(probe_ids):
         logger.warning(f"Error cleaning up temporary files: {str(e)}")
     
     return mapping
+
+def write_probe_ids_to_file(probe_ids, probes_file):
+    logger.info(f"Writing {len(probe_ids)} probe IDs to temporary file")
+    with open(probes_file, 'w') as f:
+        for probe_id in probe_ids:
+            f.write(f"{probe_id}\n")
 
 def generate_probe_mappings_csv(probes_file: str, output_file: str):
     logger.info("Running R script for probe mapping")
