@@ -73,7 +73,7 @@ def map_probes_to_genes_bioc(probe_ids):
     
     # Run R script
     logger.info("Running R script for probe mapping")
-    r_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'r_code.R')
+    r_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'generate_probe_mappings_csv.R')
     cmd = ["Rscript", r_script, probes_file, output_file]
     try:
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
