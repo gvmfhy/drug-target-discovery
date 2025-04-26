@@ -77,6 +77,20 @@ def map_probes_to_genes_bioc(probe_ids):
         return {}
     
     # Read mapping results
+    mapping = extract_probe_mapping_from_file(probe_ids, output_file)
+    
+    # Clean up temporary files
+    try:
+        for file in [probes_file, output_file]:
+            if os.path.exists(file):
+                os.remove(file)
+        os.rmdir(temp_dir)
+    except Exception as e:
+        logger.warning(f"Error cleaning up temporary files: {str(e)}")
+    
+    return mapping
+
+def extract_probe_mapping_from_file(probe_ids: list[str], output_file: str):
     mapping = {}
     try:
         if os.path.exists(output_file) and os.path.getsize(output_file) > 0:
@@ -97,16 +111,6 @@ def map_probes_to_genes_bioc(probe_ids):
             logger.error("Output file is empty or doesn't exist")
     except Exception as e:
         logger.error(f"Error reading mapping results: {str(e)}")
-    
-    # Clean up temporary files
-    try:
-        for file in [probes_file, output_file]:
-            if os.path.exists(file):
-                os.remove(file)
-        os.rmdir(temp_dir)
-    except Exception as e:
-        logger.warning(f"Error cleaning up temporary files: {str(e)}")
-    
     return mapping
 
 def write_probe_ids_to_file(probe_ids: list[str], probes_file: str):
