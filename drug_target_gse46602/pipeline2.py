@@ -49,7 +49,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('drug_target_pipeline')
 
-def map_probes_to_genes_bioc(probe_ids):
+def map_probes_to_genes_bioc(probe_ids: list[str]) -> dict[str,str]:
     """
     Map probe IDs to gene symbols using Bioconductor.
     This function uses a different approach by calling an R script directly
@@ -90,7 +90,7 @@ def map_probes_to_genes_bioc(probe_ids):
     
     return mapping
 
-def extract_probe_mapping_from_file(probe_ids: list[str], output_file: str):
+def extract_probe_mapping_from_file(probe_ids: list[str], output_file: str) -> dict[str, str]:
     mapping = {}
     try:
         if os.path.exists(output_file) and os.path.getsize(output_file) > 0:
