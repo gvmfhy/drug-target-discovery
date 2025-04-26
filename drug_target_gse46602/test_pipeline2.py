@@ -8,9 +8,9 @@ class TestPipeline2:
     test_resources_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_resources")
 
     def test_generate_probe_mappings_csv(self):
-        # Given an input file, probes_ids.txt, containing a list of probes
-        probes_file = os.path.join(self.test_resources_dir, "probe_ids.txt")
-        expected_output_file = os.path.join(self.test_resources_dir, "probe_mapping.csv")
+        # Given an input file containing a list of probe ids
+        probes_file = os.path.join(self.test_resources_dir, "tiny_probe_ids.txt")
+        # And given an output file to write to
         temp_dir = tempfile.mkdtemp()
         output_file = os.path.join(temp_dir, "probe_mapping.csv")
 
@@ -18,7 +18,8 @@ class TestPipeline2:
             # When I attempt to generate a mappings file from those probes
             pipeline2.generate_probe_mappings_csv(probes_file, output_file)
 
-            # Then the outputted mapping file should match what we have recorded from a previous run.
+            # Then the designated output file should match what we have recorded from a previous run.
+            expected_output_file = os.path.join(self.test_resources_dir, "tiny_probe_mapping.csv")
             assert(filecmp.cmp(expected_output_file, output_file))
 
         finally:
