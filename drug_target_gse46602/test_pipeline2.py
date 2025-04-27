@@ -2,6 +2,7 @@ import os
 import tempfile
 from drug_target_gse46602 import pipeline2
 import filecmp
+import shutil
 
 class TestPipeline2:
 
@@ -44,3 +45,22 @@ class TestPipeline2:
                             "1294_at":"UBA7",
                             "1316_at":"THRA"}
         assert expected_mapping == mapping
+
+    def test_remove_tmp_dir(self):
+        # Given a temp directory that I created and added stuff to
+        temp_dir = tempfile.mkdtemp()
+        probes_file = os.path.join(temp_dir, "test1.txt")
+        output_file = os.path.join(temp_dir, "test2.txt")
+        with open(probes_file, 'w') as f:
+            f.write(f"test")
+        with open(output_file, 'w') as f:
+            f.write(f"test")
+        
+
+        # When I attempt to remove it
+        pipeline2.remove_tmp_dir(temp_dir)
+
+        # Then... it is removed
+        assert not os.path.isfile(probes_file)
+        assert not os.path.isfile(output_file)
+        assert not os.path.isfile(temp_dir)

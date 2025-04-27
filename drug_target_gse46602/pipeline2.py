@@ -26,6 +26,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
+import shutil
 import subprocess
 import tempfile
 import csv
@@ -62,14 +63,12 @@ def map_probes_to_genes_bioc(probe_ids: list[str]) -> dict[str,str]:
         dict: Mapping of probe IDs to gene symbols
     """
     # Create temporary directory for input/output files
-    temp_dir = tempfile.mkdtemp()
-    probes_file = os.path.join(temp_dir, "probe_ids.txt")
-    output_file = os.path.join(temp_dir, "probe_mapping.csv")
+    temp_dir, probes_file, output_file = create_tmp_files_for_probes()
     
     # Write probe IDs to temporary file
     write_probe_ids_to_file(probe_ids, probes_file)
     
-    # Run R script
+    # Run R script to generate probe mappings and output them to CSV
     try:
         generate_probe_mappings_csv(probes_file, output_file)
     except Exception as e:
@@ -80,15 +79,21 @@ def map_probes_to_genes_bioc(probe_ids: list[str]) -> dict[str,str]:
     mapping = extract_probe_mapping_from_file(probe_ids, output_file)
     
     # Clean up temporary files
-    try:
-        for file in [probes_file, output_file]:
-            if os.path.exists(file):
-                os.remove(file)
-        os.rmdir(temp_dir)
-    except Exception as e:
-        logger.warning(f"Error cleaning up temporary files: {str(e)}")
+    remove_tmp_dir(temp_dir)
     
     return mapping
+
+def create_tmp_files_for_probes() -> tuple[str, str, str]:
+    temp_dir = tempfile.mkdtemp()
+    probes_file = os.path.join(temp_dir, "probe_ids.txt")
+    output_file = os.path.join(temp_dir, "probe_mapping.csv")
+    return temp_dir,probes_file,output_file
+
+def remove_tmp_dir(temp_dir: str):
+    try:
+        shutil.rmtree(temp_dir)
+    except Exception as e:
+        logger.warning(f"Error cleaning up temporary files", exc_info=True)
 
 def extract_probe_mapping_from_file(probe_ids: list[str], output_file: str) -> dict[str, str]:
     mapping = {}
