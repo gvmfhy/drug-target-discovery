@@ -14,6 +14,7 @@ import os
 import sys
 import argparse
 import logging
+from typing import Optional
 import pandas as pd
 import numpy as np
 import gzip
@@ -25,6 +26,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
+import shutil
 import subprocess
 import tempfile
 import csv
@@ -48,7 +50,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger('drug_target_pipeline')
 
-def map_probes_to_genes_bioc(probe_ids):
+def map_probes_to_genes_bioc(probe_ids: list[str]) -> dict[str,str]:
     """
     Map probe IDs to gene symbols using Bioconductor.
     This function uses a different approach by calling an R script directly
@@ -61,29 +63,39 @@ def map_probes_to_genes_bioc(probe_ids):
         dict: Mapping of probe IDs to gene symbols
     """
     # Create temporary directory for input/output files
-    temp_dir = tempfile.mkdtemp()
-    probes_file = os.path.join(temp_dir, "probe_ids.txt")
-    output_file = os.path.join(temp_dir, "probe_mapping.csv")
+    temp_dir, probes_file, output_file = create_tmp_files_for_probes()
     
     # Write probe IDs to temporary file
-    logger.info(f"Writing {len(probe_ids)} probe IDs to temporary file")
-    with open(probes_file, 'w') as f:
-        for probe_id in probe_ids:
-            f.write(f"{probe_id}\n")
+    write_probe_ids_to_file(probe_ids, probes_file)
     
-    # Run R script
-    logger.info("Running R script for probe mapping")
-    r_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'r_code.R')
-    cmd = ["Rscript", r_script, probes_file, output_file]
+    # Run R script to generate probe mappings and output them to CSV
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        logger.info(f"R script output: {result.stdout.strip()}")
-    except subprocess.CalledProcessError as e:
-        logger.error(f"R script failed with code {e.returncode}: {e.stderr.strip()}")
-        logger.info(f"R script output: {e.stdout.strip()}")
+        generate_probe_mappings_csv(probes_file, output_file)
+    except Exception as e:
+        logger.error("Failed to generate probe mappings csv file.", e)
         return {}
     
     # Read mapping results
+    mapping = extract_probe_mapping_from_file(probe_ids, output_file)
+    
+    # Clean up temporary files
+    remove_tmp_dir(temp_dir)
+    
+    return mapping
+
+def create_tmp_files_for_probes() -> tuple[str, str, str]:
+    temp_dir = tempfile.mkdtemp()
+    probes_file = os.path.join(temp_dir, "probe_ids.txt")
+    output_file = os.path.join(temp_dir, "probe_mapping.csv")
+    return temp_dir,probes_file,output_file
+
+def remove_tmp_dir(temp_dir: str):
+    try:
+        shutil.rmtree(temp_dir)
+    except Exception as e:
+        logger.warning(f"Error cleaning up temporary files", exc_info=True)
+
+def extract_probe_mapping_from_file(probe_ids: list[str], output_file: str) -> dict[str, str]:
     mapping = {}
     try:
         if os.path.exists(output_file) and os.path.getsize(output_file) > 0:
@@ -104,17 +116,25 @@ def map_probes_to_genes_bioc(probe_ids):
             logger.error("Output file is empty or doesn't exist")
     except Exception as e:
         logger.error(f"Error reading mapping results: {str(e)}")
-    
-    # Clean up temporary files
-    try:
-        for file in [probes_file, output_file]:
-            if os.path.exists(file):
-                os.remove(file)
-        os.rmdir(temp_dir)
-    except Exception as e:
-        logger.warning(f"Error cleaning up temporary files: {str(e)}")
-    
     return mapping
+
+def write_probe_ids_to_file(probe_ids: list[str], probes_file: str):
+    logger.info(f"Writing {len(probe_ids)} probe IDs to temporary file")
+    with open(probes_file, 'w') as f:
+        for probe_id in probe_ids:
+            f.write(f"{probe_id}\n")
+
+def generate_probe_mappings_csv(probes_file: str, output_file: str):
+    logger.info("Running R script for probe mapping")
+    r_script = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'generate_probe_mappings_csv.R')
+    cmd = ["Rscript", r_script, probes_file, output_file]
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        logger.info(f"R script output: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"R script failed with code {e.returncode}: {e.stderr.strip()}")
+        logger.info(f"R script output: {e.stdout.strip()}")
+        raise e
 
 class DrugTargetPipeline:
     def __init__(self, matrix_file, output_dir=None, p_threshold=0.05, fc_threshold=1.0):
